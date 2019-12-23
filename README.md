@@ -2,7 +2,7 @@
 This app is for having a control for the progress of your quantity activities that are done or you are doing.
 
 # Back-End Source Code
-https://github.com/Arutouru/total_progress_control_backend
+https://github.com/ArthurFMR/total_progress_control_backend
 
 ## Project setup
 ```

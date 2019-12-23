@@ -71,6 +71,7 @@ export default {
                 }) 
                 .catch(err =>{
                     this.loading = false
+                    return err
                 })       
             }
         }

@@ -32,11 +32,12 @@
                   <v-icon left>mdi-plus</v-icon>New List</v-btn>
           </v-row>
 
+        <v-text-field append-icon="mdi-magnify" v-model="search" class="ml-5 mr-5" color="white" label="Search" />
         <v-list two-line>
                <v-row  class="deep-purple darken-1" align="center" justify="center">
               <v-subheader class="white--text">Your Lists</v-subheader>
                 </v-row>
-                <v-list-item  v-for="list in allLists" @click="getItems(list.list_id)" :key="list.list_id">
+                <v-list-item  v-for="list in filterList" @click="getItems(list.list_id)" :key="list.list_id">
                     <v-list-item-icon>
                         <v-icon class="white--text">mdi-view-list</v-icon>
                     </v-list-item-icon>   
@@ -103,7 +104,19 @@ import EditList from './EditList'
 import {eventBus} from "../main"
 import axios from 'axios'
 export default {
-    computed: mapGetters(['allLists']),
+    computed: {
+        ...mapGetters(['allLists']),
+        filterList(){
+                const search = this.search.toLowerCase()
+
+                return this.allLists.filter(list =>{
+                    const title = list.title.toLowerCase()
+
+                    return title.match(search)
+                })
+            },
+        },
+
     components:{
         AddList,
         EditList,
@@ -131,6 +144,7 @@ export default {
             },
 
             user:{},
+            search: "",
         }
     },
     methods:{

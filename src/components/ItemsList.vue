@@ -17,32 +17,34 @@
                 <v-tab @click="tabIncomplete = false; tabCompleted = true">Completed</v-tab>
             </v-tabs>
             <div v-if="tabIncomplete">
-            <v-list>
-                <template v-for="item in allItems">
-                <v-divider :key="item.item_id"></v-divider>
-                <v-list-item v-if="item.qty_done !== item.total_qty" :key="item.title">
+                <v-text-field append-icon="mdi-magnify" v-model="searchIncomplete" class="ml-10 mr-10" color="deep-purple" label="Search" />
+                <v-list>
+                    <template v-for="item in filterItemIncomplete">
+                    <v-divider :key="item.item_id"></v-divider>
+                    <v-list-item v-if="item.qty_done !== item.total_qty" :key="item.title">
+                        
+                        <v-list-item-icon>
+                            <v-icon >mdi-label</v-icon>
+                        </v-list-item-icon>   
+                        
+                        <v-list-item-content v-on:click="openEditDialog(item.title, item.total_qty, item.qty_done, item.notes, item.item_id)">
+                            <v-list-item-title   v-text="item.title"></v-list-item-title>
+                            <v-progress-linear color="deep-purple" :value="(item.qty_done/item.total_qty)*100" ></v-progress-linear>
+                        </v-list-item-content>
+                        <v-chip class="ma-2">{{ item.qty_done }}/{{ item.total_qty }}</v-chip>
+                        <v-list-item-icon>
+                            <v-icon class="purple--text" @click="openEditDialog(item.title, item.total_qty, item.qty_done, item.notes, item.item_id)" >mdi-pencil</v-icon>
+                            <v-icon @click="removeItem(item.item_id)" class="red--text">mdi-delete-forever</v-icon>
+                        </v-list-item-icon>  
                     
-                    <v-list-item-icon>
-                        <v-icon >mdi-label</v-icon>
-                    </v-list-item-icon>   
-                    
-                    <v-list-item-content v-on:click="openEditDialog(item.title, item.total_qty, item.qty_done, item.notes, item.item_id)">
-                        <v-list-item-title   v-text="item.title"></v-list-item-title>
-                        <v-progress-linear color="deep-purple" :value="(item.qty_done/item.total_qty)*100" ></v-progress-linear>
-                    </v-list-item-content>
-                    <v-chip class="ma-2">{{ item.qty_done }}/{{ item.total_qty }}</v-chip>
-                    <v-list-item-icon>
-                        <v-icon class="purple--text" @click="openEditDialog(item.title, item.total_qty, item.qty_done, item.notes, item.item_id)" >mdi-pencil</v-icon>
-                        <v-icon @click="removeItem(item.item_id)" class="red--text">mdi-delete-forever</v-icon>
-                    </v-list-item-icon>  
-                
-                </v-list-item>
-                </template>
-            </v-list>
+                    </v-list-item>
+                    </template>
+                </v-list>
             </div>
             <div v-if="tabCompleted">
+            <v-text-field append-icon="mdi-magnify" v-model="searchCompleted" class="ml-10 mr-10" color="deep-purple" label="Search" />
             <v-list>
-                <template v-for="item in allItems">
+                <template v-for="item in filterItemCompleted">
                 <v-divider :key="item.item_id"></v-divider>
                 <v-list-item v-if="item.qty_done === item.total_qty"  :key="item.title">
                     
@@ -101,11 +103,35 @@ export default {
                 total_qty: 0,
                 qty_done: 0,
                 notes: "",
-            }
+            },
+
+            searchIncomplete: "",
+            searchCompleted: "",
         }
     },
 
-    computed: mapGetters(['allItems', 'getList']),
+    computed: {
+        ...mapGetters(['allItems', 'getList']),
+        filterItemIncomplete(){
+                const search = this.searchIncomplete.toLowerCase()
+
+                return this.allItems.filter(item =>{
+                    const title = item.title.toLowerCase()
+
+                    return title.match(search)
+                })
+            },
+
+        filterItemCompleted(){
+                const search = this.searchCompleted.toLowerCase()
+
+                return this.allItems.filter(item =>{
+                    const title = item.title.toLowerCase()
+
+                    return title.match(search)
+                })
+            }
+        },
 
     mounted(){
           eventBus.$on('setItemVisible', (p) =>{

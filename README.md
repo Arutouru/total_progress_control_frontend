@@ -26,3 +26,7 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+# Demo
+https://tpc-app.netlify.app/
+For now this app word better in Google Chrome
